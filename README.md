@@ -17,9 +17,9 @@ API REST del Trabajo Práctico de Desarrollo de Software. Sistema de reserva de 
 
 Clonar el repositorio e instalar las dependencias:
 
-git clone https://github.com/Patricionrp/DSW-2026-Backend.git
-cd DSW-2026-Backend
-npm install
+- git clone https://github.com/Patricionrp/DSW-2026-Backend.git
+- cd DSW-2026-Backend
+- npm install
 
 ## Scripts disponibles
 
