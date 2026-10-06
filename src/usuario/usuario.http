@@ -1,0 +1,35 @@
+### Crear usuario de prueba
+
+POST http://localhost:3000/api/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Anakin",
+  "apellido": "Skywalker",
+  "email": "anakin.skywalker@example.com"
+} 
+
+### Ver todos los usuarios
+
+GET http://localhost:3000/api/usuarios
+
+### Ver un usuario por ID
+
+GET http://localhost:3000/api/usuarios/4fa52a26-eb61-4283-8551-88118b39a661
+
+### Modificar un usuario por ID (Reemplazar por el ID devuelto al crearlo)
+
+PATCH http://localhost:3000/api/usuarios/4fa52a26-eb61-4283-8551-88118b39a661
+Content-Type: application/json  
+  
+{
+  "nombre": "Anakin ACTULIZADO",
+  "apellido": "Skywalker ACTULIZADO",
+  "email": "anakin.skywalkerACTULIZADO@example.com"
+}
+
+### Eliminar un usuario por ID 
+
+DELETE http://localhost:3000/api/usuarios/4fa52a26-eb61-4283-8551-88118b39a661
+
+

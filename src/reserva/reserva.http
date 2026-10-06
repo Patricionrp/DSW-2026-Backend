@@ -1,0 +1,31 @@
+### Crear una reserva (pegar usuarioId y espacioId devueltos al crearlos)
+
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuarioId": "df25a7fc-ceab-4fcf-b3ef-659c53e8b814",
+  "espacioId": "197b9008-24e0-41c8-96c1-f2abadf6e5c4",
+  "fecha": "2026-10-06T10:00:00.000Z"
+}
+
+### Ver todas las reservas
+
+GET http://localhost:3000/api/reservas
+
+### Ver una reserva por ID (reemplazar por el ID devuelto al crearla)
+
+GET http://localhost:3000/api/reservas/fc963023-414b-4a47-a88a-01c8cc14030
+
+### Modificar una reserva por ID (solo cambiar el estado)(reemplazar por el ID devuelto al crearla)
+
+PATCH http://localhost:3000/api/reservas/3a1d857a-5b9a-4426-bf73-28ba38a98b23
+Content-Type: application/json  
+
+{
+  "estado": "confirmada"
+}
+
+### Eliminar una reserva por ID (reemplazar por el ID devuelto al crearla)  
+
+DELETE http://localhost:3000/api/reservas/3a1d857a-5b9a-4426-bf73-28ba38a98b23
