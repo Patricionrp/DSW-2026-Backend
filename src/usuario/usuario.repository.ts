@@ -3,7 +3,7 @@ import { Usuario } from './usuario.entity.js'
 
 const usuarios: Usuario[] = []
 
-export class usuarioRepository implements Repository<Usuario> {
+export class UsuarioRepository implements Repository<Usuario> {
   public findAll(): Usuario[] {
     return usuarios
   }
