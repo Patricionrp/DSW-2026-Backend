@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import { ReservaRepository } from './reserva.repository.js'
-import { UsuarioRepository } from '../usuario/usuario.repository.js'
-import { EspacioRepository } from '../espacio/espacio.repository.js'
+import { Usuario } from '../usuario/usuario.entity.js'
+import { Espacio } from '../espacio/espacio.entity.js'
+import { orm } from '../shared/db/orm.js'
 import { Reserva } from './reserva.entity.js'
 
 const reservaRepository = new ReservaRepository()
-const usuarios = new UsuarioRepository()
-const espacios = new EspacioRepository()
+
+
 
 
 function sanitizeReservaInput(req: Request, res: Response, next: NextFunction) {
@@ -39,18 +40,18 @@ function findOne(req: Request, res: Response) {
   return res.json({ data: reserva })
 }
 
-function add(req: Request, res: Response) {
+async function add(req: Request, res: Response) {
   const input = req.body.sanitizedInput
 
   if(!input.usuarioId || !input.espacioId || !input.fecha ) {
     return res.status(400).send( { message: 'usuarioId, espacioId y fecha son requeridos'})
   }
   
-  if(!usuarios.findOne({ id: input.usuarioId })) {
+  if (!(await orm.em.findOne(Usuario, { id: input.usuarioId }))) {
     return res.status(404).send({ message: 'Usuario no encontrado' })
   }
 
-  if(!espacios.findOne({ id: input.espacioId})) {
+  if (!(await orm.em.findOne(Espacio, { id: input.espacioId }))) {
     return res.status(404).send({message: 'Espacio no encontrado'})
   }
 
@@ -67,7 +68,7 @@ function add(req: Request, res: Response) {
   return res.status(201).send({message: 'Reserva creada', data: reserva})
 }
 
-function update(req: Request, res: Response) {
+async function update(req: Request, res: Response) {
   const id = req.params.id as Reserva['id']
   const actual = reservaRepository.findOne({ id })
 
@@ -81,11 +82,11 @@ function update(req: Request, res: Response) {
   const fecha = input.fecha === undefined ? actual.fecha : new Date(input.fecha)
   const estado = input.estado ?? actual.estado
 
-  if (!usuarios.findOne({ id: usuarioId })) {
+  if (!(await orm.em.findOne(Usuario, { id: usuarioId }))) {
     return res.status(404).send({ message: 'Usuario no encontrado' })
   }
 
-  if (!espacios.findOne({ id: espacioId })) {
+  if (!(await orm.em.findOne(Espacio, { id: espacioId }))) {
     return res.status(404).send({ message: 'Espacio no encontrado' })
   }
 

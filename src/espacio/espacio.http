@@ -1,23 +1,22 @@
-### obtener todos los espacios
-GET http://localhost:3000/api/espacios
-
-
-### obtener un espacio
-GET http://localhost:3000/api/espacios/197b9008-24e0-41c8-96c1-f2abadf6e5c4
-
 ### crear un nuevo espacio
 POST http://localhost:3000/api/espacios
 Content-Type: application/json
 
 {
-  "nombre": "Laboratorio de Redes",
-  "descripcion": "Laboratorio con 20 PCs en red",
-  "capacidad": 20,
-  "tipo": "laboratorio"
+  "nombre": "Aula 204",
+  "descripcion": "Aula con proyector",
+  "capacidad": 40,
+  "tipo": "aula"
 }
 
-### modificar un espacio (PUT - recurso completo e idempotente)
-PUT http://localhost:3000/api/espacios/197b9008-24e0-41c8-96c1-f2abadf6e5c4
+### obtener todos los espacios
+GET http://localhost:3000/api/espacios
+
+### obtener un espacio
+GET http://localhost:3000/api/espacios/2
+
+### modificar un espacio (PUT)
+PUT http://localhost:3000/api/espacios/2
 Content-Type: application/json
 
 {
@@ -28,7 +27,7 @@ Content-Type: application/json
 }
 
 ### modificar un espacio (PATCH - recurso parcial)
-PATCH http://localhost:3000/api/espacios/197b9008-24e0-41c8-96c1-f2abadf6e5c4
+PATCH http://localhost:3000/api/espacios/2
 Content-Type: application/json
 
 {
@@ -36,4 +35,4 @@ Content-Type: application/json
 }
 
 ### borrar un espacio
-DELETE http://localhost:3000/api/espacios/197b9008-24e0-41c8-96c1-f2abadf6e5c4
+DELETE http://localhost:3000/api/espacios/2

@@ -4,8 +4,8 @@ POST http://localhost:3000/api/reservas
 Content-Type: application/json
 
 {
-  "usuarioId": "df25a7fc-ceab-4fcf-b3ef-659c53e8b814",
-  "espacioId": "197b9008-24e0-41c8-96c1-f2abadf6e5c4",
+  "usuarioId": "3",
+  "espacioId": "2",
   "fecha": "2026-10-06T10:00:00.000Z"
 }
 
