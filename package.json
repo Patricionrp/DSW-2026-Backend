@@ -20,7 +20,12 @@
   "homepage": "https://github.com/Patricionrp/DSW-2026-Backend#readme",
   "description": "",
   "dependencies": {
-    "express": "^5.2.1"
+    "@mikro-orm/core": "^7.2.3",
+    "@mikro-orm/decorators": "^7.2.3",
+    "@mikro-orm/mysql": "^7.2.3",
+    "@mikro-orm/sql-highlighter": "^1.0.1",
+    "express": "^5.2.1",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
