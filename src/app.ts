@@ -5,7 +5,7 @@ import { usuarioRouter } from './usuario/usuario.routes.js'
 import { reservaRouter } from './reserva/reserva.routes.js'
 import { RequestContext } from '@mikro-orm/core'
 import { orm, syncSchema } from './shared/db/orm.js'
-
+import { seed } from './shared/db/seed.js'
 const app = express()
 app.use(express.json())
 
@@ -28,7 +28,7 @@ app.use((_, res) => {
 })
 
 await syncSchema()
-
+await seed()
 app.listen(3000, () => {
   console.log('Server runnning on http://localhost:3000/')
 })

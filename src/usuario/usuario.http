@@ -1,4 +1,4 @@
-### Crear usuario de prueba
+### Crear usuario (sin rol: se asigna 'usuario' por defecto)
 POST http://localhost:3000/api/usuarios
 Content-Type: application/json
 
@@ -6,6 +6,17 @@ Content-Type: application/json
   "nombre": "Anakin",
   "apellido": "Skywalker",
   "email": "anakin.skywalker@example.com"
+}
+
+### Crear usuario administrador (rol 1 = administrador)
+POST http://localhost:3000/api/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Obi-Wan",
+  "apellido": "Kenobi",
+  "email": "obiwan.kenobi@example.com",
+  "rol": 22
 }
 
 ### Ver todos los usuarios
@@ -19,8 +30,7 @@ PATCH http://localhost:3000/api/usuarios/1
 Content-Type: application/json
 
 {
-  "nombre": "Anakin actualizado",
-  "apellido": "Skywalker actualizado"
+  "nombre": "Anakin actualizado"
 }
 
 ### Eliminar un usuario por ID

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { Usuario } from './usuario.entity.js'
+import { Rol } from '../rol/rol.entity.js'
 import { orm } from '../shared/db/orm.js'
 
 const em = orm.em
@@ -9,6 +10,7 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
     nombre: req.body.nombre,
     apellido: req.body.apellido,
     email: req.body.email,
+    rol: req.body.rol,
   }
   //more checks here
 
@@ -22,7 +24,7 @@ function sanitizeUsuarioInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const usuarios = await em.find(Usuario, {})
+    const usuarios = await em.find(Usuario, {}, { populate: ['rol'] })
     res.status(200).json({ data: usuarios })
   } catch (error: any) {
     res.status(500).json({ message: error.message })
@@ -32,7 +34,7 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id as string)
-    const usuario = await em.findOne(Usuario, { id })
+    const usuario = await em.findOne(Usuario, { id }, { populate: ['rol'] })
     if (!usuario) {
       return res.status(404).send({ message: 'Usuario not found' })
     }
@@ -44,7 +46,15 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
-    const usuario = em.create(Usuario, req.body.sanitizedInput)
+    const input = req.body.sanitizedInput
+    const rol =
+      input.rol === undefined
+        ? await em.findOne(Rol, { nombre: 'usuario' })
+        : await em.findOne(Rol, { id: input.rol })
+    if (!rol) {
+      return res.status(404).send({ message: 'Rol not found' })
+    }
+    const usuario = em.create(Usuario, { ...input, rol })
     await em.flush()
     res.status(201).send({ message: 'Usuario created', data: usuario })
   } catch (error: any) {
@@ -59,7 +69,11 @@ async function update(req: Request, res: Response) {
     if (!usuario) {
       return res.status(404).send({ message: 'Usuario not found' })
     }
-    em.assign(usuario, req.body.sanitizedInput)
+    const input = req.body.sanitizedInput
+    if (input.rol !== undefined && !(await em.findOne(Rol, { id: input.rol }))) {
+      return res.status(404).send({ message: 'Rol not found' })
+    }
+    em.assign(usuario, input)
     await em.flush()
     res.status(200).send({ message: 'Usuario updated successfully', data: usuario })
   } catch (error: any) {
