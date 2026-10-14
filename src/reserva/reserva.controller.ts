@@ -4,6 +4,7 @@ import { Usuario } from '../usuario/usuario.entity.js'
 import { Espacio } from '../espacio/espacio.entity.js'
 import { Estado } from '../estado/estado.entity.js'
 import { orm } from '../shared/db/orm.js'
+import type { FilterQuery } from '@mikro-orm/core'
 
 const em = orm.em
 
@@ -32,10 +33,56 @@ function sanitizeReservaInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const reservas = await em.find(Reserva, {}, { populate: ['usuario', 'espacio', 'estado'] })
+    const estado = req.query.estado
+    const fecha = req.query.fecha
+
+    const filtros: FilterQuery<Reserva> = {}
+
+    if (estado !== undefined) {
+      const estadosPermitidos = [
+        'pendiente',
+        'aprobada',
+        'rechazada',
+        'cancelada',
+      ]
+
+      if (
+        typeof estado !== 'string' ||
+        !estadosPermitidos.includes(estado)
+      ) {
+        return res.status(400).json({
+          message: 'Estado inválido. Usá pendiente, aprobada, rechazada o cancelada',
+        })
+      }
+
+      filtros.estado = { nombre: estado }
+    }
+
+    if (fecha !== undefined) {
+      if (
+        typeof fecha !== 'string' ||
+        !fechaValida(fecha) ||
+        new Date(fecha).toISOString().slice(0, 10) !== fecha
+      ) {
+        return res.status(400).json({
+          message: 'Fecha inválida. Usá una fecha existente con formato AAAA-MM-DD',
+        })
+      }
+
+      filtros.fecha = fecha
+    }
+
+    const reservas = await em.find(Reserva, filtros, {
+      populate: ['usuario', 'espacio', 'estado'],
+    })
+
     res.status(200).json({ data: reservas })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudieron consultar las reservas',
+    })
   }
 }
 
