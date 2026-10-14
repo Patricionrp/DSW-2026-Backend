@@ -1,0 +1,27 @@
+### Crear una disponibilidad (el espacio debe existir; diaSemana 1 = lunes)
+POST http://localhost:3000/api/disponibilidades
+Content-Type: application/json
+
+{
+  "espacio": 2,
+  "diaSemana": 1,
+  "horaInicio": "08:00:00",
+  "horaFin": "12:00:00"
+}
+
+### Ver todas las disponibilidades
+GET http://localhost:3000/api/disponibilidades
+
+### Ver una disponibilidad por ID
+GET http://localhost:3000/api/disponibilidades/1
+
+### Modificar una disponibilidad (PATCH - solo el horario de fin)
+PATCH http://localhost:3000/api/disponibilidades/1
+Content-Type: application/json
+
+{
+  "horaFin": "13:00:00"
+}
+
+### Eliminar una disponibilidad por ID
+DELETE http://localhost:3000/api/disponibilidades/1
