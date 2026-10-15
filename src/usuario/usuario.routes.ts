@@ -1,18 +1,34 @@
-import { Router} from 'express'
-import{
+import { Router } from 'express'
+import {
   sanitizeUsuarioInput,
+  validarUsuarioId,
   findAll,
   findOne,
   add,
   update,
-  remove
+  remove,
 } from './usuario.controller.js'
 
 export const usuarioRouter = Router()
 
 usuarioRouter.get('/', findAll)
-usuarioRouter.get('/:id', findOne)
+
+usuarioRouter.get('/:id', validarUsuarioId, findOne)
+
 usuarioRouter.post('/', sanitizeUsuarioInput, add)
-usuarioRouter.put('/:id', sanitizeUsuarioInput, update)
-usuarioRouter.patch('/:id', sanitizeUsuarioInput, update)
-usuarioRouter.delete('/:id', remove)
+
+usuarioRouter.put(
+  '/:id',
+  validarUsuarioId,
+  sanitizeUsuarioInput,
+  update
+)
+
+usuarioRouter.patch(
+  '/:id',
+  validarUsuarioId,
+  sanitizeUsuarioInput,
+  update
+)
+
+usuarioRouter.delete('/:id', validarUsuarioId, remove)
