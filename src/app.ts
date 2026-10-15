@@ -7,6 +7,7 @@ import { disponibilidadRouter } from './disponibilidad/disponibilidad.routes.js'
 import { RequestContext } from '@mikro-orm/core'
 import { orm, syncSchema } from './shared/db/orm.js'
 import { seed } from './shared/db/seed.js'
+import { estadoRouter } from './estado/estado.routes.js'
 
 
 const app = express()
@@ -27,6 +28,8 @@ app.use('/api/usuarios', usuarioRouter)
 app.use('/api/reservas', reservaRouter)
 
 app.use('/api/disponibilidades', disponibilidadRouter)
+
+app.use('/api/estados', estadoRouter)
 
 app.use((_, res) => {
   return res.status(404).send({ message: 'Resource not found' })
