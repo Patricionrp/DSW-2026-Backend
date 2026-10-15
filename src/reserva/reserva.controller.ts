@@ -107,6 +107,12 @@ async function add(req: Request, res: Response) {
   try {
     const input = req.body.sanitizedInput
 
+    if (input.estado !== undefined) {
+      return res.status(400).json({
+      message: 'Las reservas nuevas se crean pendientes. Omití el campo estado',
+    })
+}
+
     if (!input.usuario || !input.espacio || !input.fecha || !input.horaInicio || !input.horaFin) {
       return res
         .status(400)
@@ -122,12 +128,13 @@ async function add(req: Request, res: Response) {
     if (!espacio) {
       return res.status(404).send({ message: 'Espacio no encontrado' })
     }
-    const estado =
-      input.estado === undefined
-        ? await em.findOne(Estado, { nombre: 'pendiente' })
-        : await em.findOne(Estado, { id: input.estado })
+    const estado = await em.findOne(Estado, {
+    nombre: 'pendiente',
+    })
+
     if (!estado) {
-      return res.status(400).send({ message: 'Estado inválido' })
+      return res.status(500).json({
+    message: 'No está configurado el estado pendiente', })
     }
 
     if (!fechaValida(input.fecha)) {
@@ -160,8 +167,10 @@ async function update(req: Request, res: Response) {
       return res.status(404).send({ message: 'Usuario no encontrado' })
     }
 
-    if (input.estado !== undefined && !(await em.findOne(Estado, { id: input.estado }))) {
-      return res.status(400).send({ message: 'Estado inválido' })
+    if (input.estado !== undefined) {
+    return res.status(400).json({
+      message: 'El estado se modifica mediante la operación de aprobación o rechazo',
+    })
     }
 
     if (input.espacio !== undefined && !(await em.findOne(Espacio, { id: input.espacio }))) {
@@ -188,6 +197,78 @@ async function update(req: Request, res: Response) {
   }
 }
 
+async function cambiarEstado(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id)
+    const estadoSolicitado = req.body?.estado
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      return res.status(400).json({
+        message: 'El ID de la reserva debe ser un número entero positivo',
+      })
+    }
+
+    if (
+      estadoSolicitado !== 'aprobada' &&
+      estadoSolicitado !== 'rechazada'
+    ) {
+      return res.status(400).json({
+        message: 'El estado solicitado debe ser aprobada o rechazada',
+      })
+    }
+
+    const reserva = await em.findOne(
+      Reserva,
+      { id },
+      { populate: ['estado'] }
+    )
+
+    if (!reserva) {
+      return res.status(404).json({
+        message: 'Reserva no encontrada',
+      })
+    }
+
+    if (reserva.estado.nombre !== 'pendiente') {
+      return res.status(409).json({
+        message: 'Solo se puede aprobar o rechazar una reserva pendiente',
+      })
+    }
+
+    const estadoNuevo = await em.findOne(Estado, {
+      nombre: estadoSolicitado,
+    })
+
+    if (!estadoNuevo) {
+      return res.status(500).json({
+        message: 'No está configurado el estado solicitado',
+      })
+    }
+
+    const cantidadActualizada = await em.nativeUpdate(
+      Reserva,
+      { id, estado: reserva.estado },
+      { estado: estadoNuevo }
+    )
+
+    if (cantidadActualizada !== 1) {
+      return res.status(409).json({
+        message: 'La reserva cambió durante la operación. Actualizá el listado',
+      })
+    }
+
+    res.status(200).json({
+      message: `Reserva ${estadoSolicitado}`,
+    })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo cambiar el estado de la reserva',
+    })
+  }
+}
+
 async function remove(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id as string)
@@ -203,4 +284,12 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeReservaInput, findAll, findOne, add, update, remove }
+export {
+  sanitizeReservaInput,
+  findAll,
+  findOne,
+  add,
+  update,
+  remove,
+  cambiarEstado,
+}
