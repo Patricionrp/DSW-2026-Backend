@@ -148,3 +148,24 @@ Content-Type: application/json
 
 ### Eliminar una reserva por ID
 DELETE http://localhost:3000/api/reservas/1
+
+### Listar todas las reservas
+GET http://localhost:3000/api/reservas
+
+### Filtrar solamente por estado
+GET http://localhost:3000/api/reservas?estado=pendiente
+
+### Filtrar solamente por fecha
+GET http://localhost:3000/api/reservas?fecha=2026-10-20
+
+### Filtrar por estado y fecha
+GET http://localhost:3000/api/reservas?estado=pendiente&fecha=2026-10-20
+
+### Consultar con un estado inválido
+GET http://localhost:3000/api/reservas?estado=inventado
+
+### Consultar con una fecha inexistente
+GET http://localhost:3000/api/reservas?fecha=2026-02-30
+
+### Consultar el detalle de una reserva
+GET http://localhost:3000/api/reservas/1
