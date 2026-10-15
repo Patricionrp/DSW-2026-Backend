@@ -1,4 +1,58 @@
-### Crear una reserva (usuario y espacio deben existir; estado por defecto: pendiente)
+### Reglas de negocio de Reserva
+### Supuestos: existe el usuario 1, el espacio 2 y una Disponibilidad del espacio 2
+### para el LUNES (diaSemana 1) de 08:00:00 a 12:00:00. 2026-10-19 es lunes.
+### Estados: 1 = pendiente, 2 = aprobada, 3 = rechazada, 4 = cancelada.
+### Ajustar los ids de reserva (/1, /2) a los que devuelva tu base.
+
+### 1. Reserva valida (lunes 09:00-11:00) -> 201, queda en estado pendiente
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "09:00:00",
+  "horaFin": "11:00:00"
+}
+
+### 2. Se solapa con la anterior (10:00-12:00) -> 409
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "10:00:00",
+  "horaFin": "12:00:00"
+}
+
+### 3. Contigua a la primera (11:00-12:00) -> 201
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "11:00:00",
+  "horaFin": "12:00:00"
+}
+
+### 4. Fuera de la franja de disponibilidad (07:00-09:00) -> 400
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "07:00:00",
+  "horaFin": "09:00:00"
+}
+
+### 5. Dia sin franja cargada (martes) -> 400
 POST http://localhost:3000/api/reservas
 Content-Type: application/json
 
@@ -10,18 +64,86 @@ Content-Type: application/json
   "horaFin": "11:00:00"
 }
 
+### 6. horaFin anterior a horaInicio -> 400
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "11:00:00",
+  "horaFin": "09:00:00"
+}
+
+### 7. Hora con formato invalido -> 400
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "9:00",
+  "horaFin": "11:00:00"
+}
+
 ### Ver todas las reservas
 GET http://localhost:3000/api/reservas
 
 ### Ver una reserva por ID
 GET http://localhost:3000/api/reservas/1
 
-### Aprobar una reserva (estado 2 = aprobada)
+### 8. Aprobar la reserva 1 (pendiente -> aprobada) -> 200
+PATCH http://localhost:3000/api/reservas/1
+Content-Type: application/json
+
+{
+  "estado": 2
+}
+
+### 9. Rechazar una reserva ya aprobada (aprobada -> rechazada) -> 409
+PATCH http://localhost:3000/api/reservas/1
+Content-Type: application/json
+
+{
+  "estado": 3
+}
+
+### 10. Estado inexistente -> 400
 PATCH http://localhost:3000/api/reservas/1
 Content-Type: application/json
 
 {
   "estado": 99
+}
+
+### 11. Cancelar la reserva 1 (aprobada -> cancelada) -> 200, libera el horario
+PATCH http://localhost:3000/api/reservas/1
+Content-Type: application/json
+
+{
+  "estado": 4
+}
+
+### 12. Modificar una reserva cancelada -> 409
+PATCH http://localhost:3000/api/reservas/1
+Content-Type: application/json
+
+{
+  "horaFin": "10:00:00"
+}
+
+### 13. Con la reserva 1 cancelada, el horario 09:00-11:00 vuelve a estar libre -> 201
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+
+{
+  "usuario": 1,
+  "espacio": 2,
+  "fecha": "2026-10-19",
+  "horaInicio": "09:00:00",
+  "horaFin": "11:00:00"
 }
 
 ### Eliminar una reserva por ID
