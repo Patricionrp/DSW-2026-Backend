@@ -12,6 +12,34 @@ Content-Type: application/json
 ### obtener todos los espacios
 GET http://localhost:3000/api/espacios
 
+### Listado por disponibilidad
+### Supone una Disponibilidad del espacio 2 el LUNES de 08:00:00 a 12:00:00
+### y una reserva pendiente o aprobada del espacio 2 el 2026-10-19 de 09:00:00 a 11:00:00.
+
+### espacios DISPONIBLES el lunes 11:00-12:00 -> incluye el espacio 2 (la reserva termina a las 11:00)
+GET http://localhost:3000/api/espacios?disponibilidad=disponibles&fecha=2026-10-19&horaInicio=11:00:00&horaFin=12:00:00
+
+### espacios DISPONIBLES el lunes 10:00-11:30 -> NO incluye el espacio 2 (se pisa con la reserva)
+GET http://localhost:3000/api/espacios?disponibilidad=disponibles&fecha=2026-10-19&horaInicio=10:00:00&horaFin=11:30:00
+
+### espacios NO DISPONIBLES el lunes 10:00-11:30 -> incluye el espacio 2 (ocupado)
+GET http://localhost:3000/api/espacios?disponibilidad=no_disponibles&fecha=2026-10-19&horaInicio=10:00:00&horaFin=11:30:00
+
+### espacios NO DISPONIBLES el martes -> incluye al espacio 2 (no tiene franja ese dia)
+GET http://localhost:3000/api/espacios?disponibilidad=no_disponibles&fecha=2026-10-20&horaInicio=09:00:00&horaFin=11:00:00
+
+### todos los espacios, indicando el modo explicitamente
+GET http://localhost:3000/api/espacios?disponibilidad=todos
+
+### faltan parametros de horario -> 400
+GET http://localhost:3000/api/espacios?disponibilidad=disponibles&fecha=2026-10-19
+
+### modo invalido -> 400
+GET http://localhost:3000/api/espacios?disponibilidad=libres&fecha=2026-10-19&horaInicio=09:00:00&horaFin=10:00:00
+
+### horaFin anterior a horaInicio -> 400
+GET http://localhost:3000/api/espacios?disponibilidad=disponibles&fecha=2026-10-19&horaInicio=11:00:00&horaFin=09:00:00
+
 ### obtener un espacio
 GET http://localhost:3000/api/espacios/2
 

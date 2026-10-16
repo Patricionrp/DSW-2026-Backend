@@ -1,8 +1,16 @@
 import { Request, Response, NextFunction } from 'express'
 import { Espacio } from './espacio.entity.js'
 import { orm } from '../shared/db/orm.js'
+import {
+  espaciosPorDisponibilidad,
+  fechaValida,
+  horaValida,
+} from '../shared/disponibilidad.js'
 
 const em = orm.em
+
+const modosDeListado = ['todos', 'disponibles', 'no_disponibles'] as const
+type ModoDeListado = (typeof modosDeListado)[number]
 
 function sanitizeEspacioInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
@@ -23,7 +31,42 @@ function sanitizeEspacioInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const espacios = await em.find(Espacio, {})
+    const { disponibilidad, fecha, horaInicio, horaFin } = req.query
+    const modo = disponibilidad === undefined ? 'todos' : disponibilidad
+
+    if (!modosDeListado.includes(modo as ModoDeListado)) {
+      return res
+        .status(400)
+        .send({ message: 'disponibilidad inválida (todos, disponibles o no_disponibles)' })
+    }
+
+    if (modo === 'todos') {
+      const espacios = await em.find(Espacio, {})
+      return res.status(200).json({ data: espacios })
+    }
+
+    if (typeof fecha !== 'string' || typeof horaInicio !== 'string' || typeof horaFin !== 'string') {
+      return res.status(400).send({
+        message: 'fecha, horaInicio y horaFin son requeridos para filtrar por disponibilidad',
+      })
+    }
+
+    if (!fechaValida(fecha)) {
+      return res.status(400).send({ message: 'Fecha inválida (formato AAAA-MM-DD)' })
+    }
+
+    if (!horaValida(horaInicio) || !horaValida(horaFin)) {
+      return res.status(400).send({ message: 'Hora inválida (formato HH:mm:ss)' })
+    }
+
+    if (horaFin <= horaInicio) {
+      return res.status(400).send({ message: 'horaFin debe ser posterior a horaInicio' })
+    }
+
+    const espacios = await espaciosPorDisponibilidad(
+      { fecha, horaInicio, horaFin },
+      modo as 'disponibles' | 'no_disponibles'
+    )
     res.status(200).json({ data: espacios })
   } catch (error: any) {
     res.status(500).json({ message: error.message })
