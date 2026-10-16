@@ -18,10 +18,29 @@ const transiciones: Record<string, string[]> = {
   cancelada: [],
 }
 
-const fechaValida = (fecha: string) =>
-  /^\d{4}-\d{2}-\d{2}$/.test(fecha) && !Number.isNaN(new Date(fecha).getTime())
+function fechaValida(fecha: unknown) {
+  if (
+    typeof fecha !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(fecha)
+  ) {
+    return false
+  }
 
-const horaValida = (hora: string) => /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(hora)
+  const fechaConvertida = new Date(fecha)
+
+  if (Number.isNaN(fechaConvertida.getTime())) {
+    return false
+  }
+
+  return fechaConvertida.toISOString().slice(0, 10) === fecha
+}
+
+function horaValida(hora: unknown) {
+  return (
+    typeof hora === 'string' &&
+    /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(hora)
+  )
+}
 
 type DatosReserva = {
   espacio: Espacio
@@ -61,7 +80,21 @@ async function conflictoDeReserva(datos: DatosReserva, excluirId?: number) {
   return null
 }
 
-function sanitizeReservaInput(req: Request, res: Response, next: NextFunction) {
+function sanitizeReservaInput(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (
+    req.body === null ||
+    typeof req.body !== 'object' ||
+    Array.isArray(req.body)
+  ) {
+    return res.status(400).json({
+      message: 'Enviá los datos de la reserva como un objeto JSON',
+    })
+  }
+
   req.body.sanitizedInput = {
     usuario: req.body.usuario,
     espacio: req.body.espacio,
@@ -71,11 +104,37 @@ function sanitizeReservaInput(req: Request, res: Response, next: NextFunction) {
     horaFin: req.body.horaFin,
   }
 
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key]
+  const input = req.body.sanitizedInput
+
+  for (const campo of ['usuario', 'espacio', 'estado']) {
+    const valor = input[campo]
+
+    if (
+      valor !== undefined &&
+      (
+        typeof valor !== 'number' ||
+        !Number.isSafeInteger(valor) ||
+        valor <= 0
+      )
+    ) {
+      return res.status(400).json({
+        message: `${campo} debe ser un identificador numérico entero positivo`,
+      })
+    }
+  }
+
+  Object.keys(input).forEach((key) => {
+    if (input[key] === undefined) {
+      delete input[key]
     }
   })
+
+  if (Object.keys(input).length === 0) {
+    return res.status(400).json({
+      message: 'Enviá al menos un campo de la reserva',
+    })
+  }
+
   next()
 }
 
@@ -109,8 +168,7 @@ async function findAll(req: Request, res: Response) {
     if (fecha !== undefined) {
       if (
         typeof fecha !== 'string' ||
-        !fechaValida(fecha) ||
-        new Date(fecha).toISOString().slice(0, 10) !== fecha
+        !fechaValida(fecha)
       ) {
         return res.status(400).json({
           message: 'Fecha inválida. Usá una fecha existente con formato AAAA-MM-DD',
@@ -146,8 +204,12 @@ async function findOne(req: Request, res: Response) {
       return res.status(404).send({ message: 'Reserva not found' })
     }
     res.status(200).json({ data: reserva })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -181,9 +243,11 @@ async function add(req: Request, res: Response) {
 
     const estado = await em.findOne(Estado, { nombre: 'pendiente' })
     if (!estado) {
-      return res
-        .status(500)
-        .send({ message: 'Estado pendiente no encontrado (¿se ejecutó el seed?)' })
+      console.error('No existe el estado pendiente en la base de datos')
+
+      return res.status(500).json({
+        message: 'No se pudo crear la reserva. Intentá más tarde.',
+      })
     }
 
     const conflicto = await conflictoDeReserva({
@@ -206,8 +270,12 @@ async function add(req: Request, res: Response) {
     })
     await em.flush()
     res.status(201).send({ message: 'Reserva creada', data: reserva })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -282,8 +350,12 @@ async function update(req: Request, res: Response) {
     em.assign(reserva, { usuario, espacio, estado, fecha, horaInicio, horaFin })
     await em.flush()
     res.status(200).send({ message: 'Reserva actualizada', data: reserva })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -291,14 +363,25 @@ async function remove(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id as string)
     const reserva = await em.findOne(Reserva, { id })
+
     if (!reserva) {
-      return res.status(404).send({ message: 'Reserva no encontrada' })
+      return res.status(404).json({
+        message: 'Reserva no encontrada',
+      })
     }
+
     em.remove(reserva)
     await em.flush()
-    res.status(200).send({ message: 'Reserva eliminada', data: reserva })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+
+    res.status(200).json({
+      message: 'Reserva eliminada',
+    })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo eliminar la reserva. Intentá nuevamente.',
+    })
   }
 }
 

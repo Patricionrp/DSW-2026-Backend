@@ -30,8 +30,12 @@ async function findAll(req: Request, res: Response) {
   try {
     const disponibilidades = await em.find(Disponibilidad, {}, { populate: ['espacio'] })
     res.status(200).json({ data: disponibilidades })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -43,8 +47,12 @@ async function findOne(req: Request, res: Response) {
       return res.status(404).send({ message: 'Disponibilidad no encontrada' })
     }
     res.status(200).json({ data: disponibilidad })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -78,8 +86,12 @@ async function add(req: Request, res: Response) {
     const disponibilidad = em.create(Disponibilidad, { ...input, espacio })
     await em.flush()
     res.status(201).send({ message: 'Disponibilidad creada', data: disponibilidad })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -117,8 +129,12 @@ async function update(req: Request, res: Response) {
     em.assign(disponibilidad, input)
     await em.flush()
     res.status(200).send({ message: 'Disponibilidad actualizada', data: disponibilidad })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
@@ -132,8 +148,12 @@ async function remove(req: Request, res: Response) {
     em.remove(disponibilidad)
     await em.flush()
     res.status(200).send({ message: 'Disponibilidad eliminada', data: disponibilidad })
-  } catch (error: any) {
-    res.status(500).json({ message: error.message })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      message: 'No se pudo completar la operación. Intentá nuevamente.',
+    })
   }
 }
 
