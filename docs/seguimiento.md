@@ -53,7 +53,7 @@ En las referencias, BE corresponde al backend y FE al frontend.
 | C04 | Visualización en distintos tamaños de pantalla | Verificada manualmente | Revisión de la interfaz en los tamaños requeridos |
 | C05 | Ejecución local del sistema | Comprobada durante el desarrollo | Backend, MySQL y frontend ejecutados; operaciones principales comprobadas manualmente |
 
-## Trabajo previsto para aprobación
+## Trabajo previsto para AD
 
 | ID | Trabajo | Estado |
 |---|---|---|
