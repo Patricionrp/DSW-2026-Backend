@@ -4,96 +4,121 @@
 
 ### Integrantes
 
-- **49200 — Nuñez, Mateo Nicolás**
-- **47539 — Riquelme, Patricio**
+- Mateo Nicolás Nuñez — Legajo 49200.
+- Patricio Riquelme — Legajo 47539.
 
 ### Repositorios
 
-- [Frontend app](https://github.com/mateonunez1907/DSW-2026-Frontend)
-- [Backend app](https://github.com/Patricionrp/DSW-2026-Backend)
-- [Documentación](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/README.md)
+- [Frontend](https://github.com/mateonunez1907/DSW-2026-Frontend).
+- [Backend](https://github.com/Patricionrp/DSW-2026-Backend).
+- [Documentación del proyecto](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/README.md).
 
 ## Tema
 
 ### Descripción
 
 El sistema permite organizar las reservas de aulas, laboratorios y otros espacios compartidos.
-Se registran usuarios, espacios y sus horarios semanales de atención.
-Para una fecha y un intervalo horario, se consulta qué espacios pueden reservarse.
-Las reservas quedan pendientes y luego pueden aprobarse, rechazarse o cancelarse, evitando superposiciones entre reservas que ocupan el mismo espacio.
 
-### Modelo
+Se registran usuarios, espacios y sus horarios semanales de disponibilidad. Para una fecha y un intervalo horario, se pueden consultar los espacios disponibles y realizar una reserva.
 
-- [Modelo de dominio y relaciones](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/modelo-dominio.md)
-- [Modelo de datos](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/modelo-datos.md)
+Las reservas se crean como pendientes. Luego pueden aprobarse, rechazarse o cancelarse. El backend comprueba la disponibilidad del espacio y evita superposiciones con otras reservas pendientes o aprobadas.
 
-El modelo se presenta con Mermaid en Markdown.
+### Modelo de dominio
+
+El modelo representa las entidades Usuario, Rol, Espacio, Disponibilidad, Reserva y Estado, junto con sus relaciones.
+
+[Consultar el modelo de dominio](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/modelo-dominio.md).
 
 ### Tecnologías
 
 - Frontend: React, TypeScript, Vite y Tailwind CSS.
 - Backend: Node.js, TypeScript y Express.
 - Persistencia: MySQL mediante MikroORM.
-- Gestión del código y revisión: Git, GitHub y pull requests.
+- Gestión de dependencias: npm.
+- Gestión del código: Git, GitHub y pull requests.
 
-TypeScript se compila a JavaScript. Frontend y backend son proyectos separados y se comunican mediante una API HTTP con JSON.
+Frontend y backend son proyectos separados y se comunican mediante una API HTTP que intercambia datos en formato JSON.
 
 ## Alcance funcional
 
-### Alcance mínimo — Regularidad
+### Regularidad
 
-| Requisito | Detalle |
+| Requisito | Funcionalidades propuestas |
 |---|---|
-| CRUD simple propuesto | 1. CRUD Espacio.<br>2. CRUD Usuario. |
-| CRUD dependiente | 1. CRUD Reserva, relacionado con Usuario, Espacio y Estado.<br>2. CRUD Disponibilidad, relacionado con Espacio. |
-| Listado con filtro y detalle | 1. Espacios filtrados por disponibilidad para fecha y horario, con acceso al detalle del espacio.<br>2. Reservas filtradas por estado y fecha, con detalle que reúne los datos de la reserva, del usuario y del espacio. |
-| CUU / Epic | 1. Realizar una reserva de espacio.<br>2. Aprobar o rechazar una reserva pendiente. |
+| CRUD simple propuesto | CRUD de Espacio y CRUD de Usuario |
+| CRUD dependiente | CRUD de Reserva, relacionado con Usuario, Espacio y Estado; CRUD de Disponibilidad, relacionado con Espacio |
+| Listados con filtro y detalle | Espacios filtrados por disponibilidad para una fecha y horario; reservas filtradas por estado y fecha |
+| Casos de uso | Realizar una reserva de espacio; aprobar o rechazar una reserva pendiente |
 
-#### Precisiones del alcance
+### Funcionamiento de los listados
 
-- Disponibilidad define horarios semanales: día de la semana, hora inicial y hora final.
-- Reserva define una fecha concreta, un horario y las relaciones con usuario y espacio.
-- Pendiente y aprobada ocupan el horario. Rechazada y cancelada lo liberan.
-- La interfaz permite crear y consultar reservas y modificar su estado. La API también dispone de actualización de datos y eliminación física de reservas. La cancelación de la interfaz conserva el registro.
-- El usuario recibe por defecto el rol precargado `usuario`. Actualmente existe una referencia obligatoria a Rol, aunque el alta del frontend no exige seleccionarlo. La clasificación de Usuario como CRUD simple proviene del alcance original; debe validarse con el docente frente a la definición estricta de CRUD simple de la FAQ.
-- El detalle de espacios consulta al backend los datos del espacio y sus horarios semanales relacionados. El ajuste está integrado en el [PR #7 del frontend](https://github.com/mateonunez1907/DSW-2026-Frontend/pull/7).
+**Espacios:**
 
-### Adicionales para aprobación
+1. Se ingresa una fecha y un intervalo horario.
+2. Se selecciona el filtro de disponibilidad.
+3. El backend devuelve los espacios que corresponden a la búsqueda.
+4. Al seleccionar un espacio, se consultan sus datos y sus horarios semanales para mostrar el detalle.
 
-| Requisito | Alcance previsto |
+**Reservas:**
+
+1. Se selecciona un estado, una fecha o ambos filtros.
+2. El backend devuelve las reservas correspondientes.
+3. Al seleccionar una reserva, se muestra su detalle con los datos del usuario, el espacio y el estado.
+
+### Precisiones de la implementación
+
+- Disponibilidad representa una franja semanal: día de la semana, hora inicial y hora final.
+- Reserva representa una solicitud para una fecha concreta y un intervalo horario.
+- Las reservas pendientes y aprobadas ocupan el horario.
+- Las reservas rechazadas y canceladas liberan el horario.
+- Una franja semanal debe cubrir completamente el intervalo solicitado.
+- La interfaz permite crear reservas, consultarlas y modificar su estado.
+- La API también permite actualizar los datos y eliminar físicamente una reserva.
+- La cancelación desde la interfaz conserva el registro.
+- Los roles se precargan. El alta de usuario asigna por defecto el rol `usuario`.
+- La autenticación y las restricciones de acceso por rol todavía no están implementadas.
+
+Usuario fue propuesto inicialmente como CRUD simple. La implementación actual tiene una relación obligatoria con Rol, aunque su selección no se exige en el formulario de alta. Su clasificación debe confirmarse con el docente.
+
+### Aprobación directa o en examen
+
+| Área | Alcance previsto |
 |---|---|
-| CRUD | Completar la administración de Roles y de las clases de negocio que requiera el alcance final. |
-| CUU / Epic | 1. Registro e inicio de sesión.<br>2. Reserva de espacio.<br>3. Cancelación de reserva.<br>4. Aprobación o rechazo por un administrador autorizado.<br>5. Consulta del historial de reservas. |
-| Acceso | Implementar autenticación y proteger API e interfaz con al menos dos niveles de acceso. |
-| Calidad | Incorporar los tests de backend y frontend correspondientes a la etapa y documentar sus resultados. |
-| Entrega | Completar ambientes, documentación de API, video y los requisitos de publicación que confirme la cátedra para aprobación. |
+| CRUD | Completar la administración de las clases de negocio necesarias para el alcance final |
+| Casos de uso | Registro e inicio de sesión; reserva de espacio; cancelación de reserva; aprobación o rechazo por un administrador autorizado; consulta del historial de reservas |
+| Acceso | Implementar autenticación y proteger backend y frontend con al menos dos niveles de acceso |
+| Tests | Incorporar los tests de backend y frontend solicitados para la etapa y documentar sus resultados |
+| Configuración y entrega | Definir ambientes y completar las evidencias, el video y las condiciones de publicación de la entrega final |
 
-La reserva, la cancelación y los cambios de estado ya cuentan con una implementación inicial. El acceso autenticado y la comprobación de permisos todavía no están implementados.
+La creación, cancelación y modificación de estados de reservas ya tienen una implementación inicial. Para aprobación se deberá incorporar la identidad del usuario autenticado y comprobar sus permisos.
 
 ### Alcance adicional voluntario
 
 No se comprometen funcionalidades voluntarias adicionales para esta entrega de regularidad.
 
-## Implementación y reglas
+## Gestión del proyecto
 
-- [Reglas de negocio y casos de uso](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/reglas-negocio.md)
-- [Arquitectura](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/arquitectura.md)
-- [Instalación](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/instalacion.md)
+El trabajo se distribuye por funcionalidades entre los dos integrantes. La coordinación se realiza principalmente por Discord y WhatsApp.
 
-## Gestión y evidencia
+Los cambios se desarrollan en ramas y se integran mediante pull requests.
 
-El trabajo se desarrolla por funcionalidades, con ramas y revisión mediante pull requests. El seguimiento documental del cierre utiliza un tablero sencillo inspirado en Kanban, con estados Pendiente, En curso y Realizado. El registro combina avances verificables por commits y PR con la reconstrucción de acuerdos reales de coordinación por Discord y WhatsApp, informados al preparar la entrega. Se aclara cuando no se registró la fecha exacta de una conversación.
+Para el cierre se utiliza un seguimiento sencillo inspirado en Kanban, con estados Pendiente, En curso y Realizado. Los avances anteriores se reconstruyen mediante commits, pull requests y los acuerdos informados por los integrantes.
 
-- [Seguimiento](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/seguimiento.md)
-- [Avances y minutas](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/avances-y-minutas.md)
-- [PR del backend](https://github.com/Patricionrp/DSW-2026-Backend/pulls?q=is%3Apr)
-- [PR del frontend](https://github.com/mateonunez1907/DSW-2026-Frontend/pulls?q=is%3Apr)
-- [Relación de PR y aportes](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/pull-requests.md)
+- [Seguimiento de funcionalidades y errores](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/seguimiento.md).
+- [Avances y minutas](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/avances-y-minutas.md).
+- [Pull requests y contribuciones](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/pull-requests.md).
 
-## Referencias de entrega
+## Documentación complementaria
 
-- [Backend: último cierre de validaciones, PR #12](https://github.com/Patricionrp/DSW-2026-Backend/pull/12)
-- [Backend: filtro por disponibilidad, PR #11](https://github.com/Patricionrp/DSW-2026-Backend/pull/11)
-- [Frontend: detalle con consulta y horarios, PR #7](https://github.com/mateonunez1907/DSW-2026-Frontend/pull/7)
+- [Instalación y ejecución](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/instalacion.md).
+- [Reglas de negocio](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/reglas-negocio.md).
+- [API del backend](https://github.com/Patricionrp/DSW-2026-Backend/blob/main/docs/api.md).
 
-Los PR anteriores ya están integrados. Los PR de documentación deben agregarse al registro una vez publicados.
+## Referencias de implementación y entrega
+
+- [Backend: filtro de espacios por disponibilidad, PR #11](https://github.com/Patricionrp/DSW-2026-Backend/pull/11).
+- [Backend: validaciones y manejo de errores, PR #12](https://github.com/Patricionrp/DSW-2026-Backend/pull/12).
+- [Backend: documentación de regularidad, PR #13](https://github.com/Patricionrp/DSW-2026-Backend/pull/13).
+- [Frontend: detalle de espacios y horarios, PR #7](https://github.com/mateonunez1907/DSW-2026-Frontend/pull/7).
+
+Estos pull requests están integrados. Los cambios posteriores se incorporarán al registro cuando se publiquen.

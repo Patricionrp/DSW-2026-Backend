@@ -1,27 +1,31 @@
 # DSW 2026 — Backend de reserva de espacios
 
-API del Trabajo Práctico Integrador de Desarrollo de Software. Permite gestionar usuarios, espacios, horarios semanales y reservas.
+Backend del Trabajo Práctico Integrador de Desarrollo de Software. Permite gestionar usuarios, espacios, disponibilidades semanales y reservas.
 
-- [Frontend](https://github.com/mateonunez1907/DSW-2026-Frontend)
-- [Documentación del proyecto](docs/README.md)
-- [Propuesta](docs/proposal.md)
-- [Modelo de dominio](docs/modelo-dominio.md)
+## Integrantes
+
+- Mateo Nicolás Nuñez — Legajo 49200.
+- Patricio Riquelme — Legajo 47539.
 
 ## Tecnologías
 
-Node.js, TypeScript, Express, MikroORM, MySQL y npm.
+- Node.js y TypeScript.
+- Express.
+- MikroORM.
+- MySQL.
+- npm.
 
-## Requisitos
+## Requisitos previos
 
 - Git.
-- Node.js 24.x como versión común recomendada para los dos repositorios. En la preparación de esta entrega se identificó Node.js 26.5.0 en la computadora de desarrollo.
+- Node.js 24.x.
 - npm.
-- MySQL Server en ejecución y una base de datos accesible por red.
-- Un usuario de MySQL con permisos sobre esa base para consultar, modificar y crear/actualizar tablas.
-
-La versión instalada de MikroORM requiere Node.js 22.17 o posterior. No usar el requisito anterior de Node.js 20 del README inicial.
+- MySQL Server en ejecución.
+- Una cuenta de MySQL con permisos para consultar, modificar y crear tablas en la base utilizada por el proyecto.
 
 ## Instalación
+
+### 1. Descargar el proyecto
 
 ```bash
 git clone https://github.com/Patricionrp/DSW-2026-Backend.git
@@ -29,19 +33,25 @@ cd DSW-2026-Backend
 npm ci
 ```
 
-Crear la base en MySQL, con una cuenta que tenga permisos:
+### 2. Crear la base de datos
+
+Desde un cliente conectado a MySQL, ejecutar:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS reservaEspacios CHARACTER SET utf8mb4;
 ```
 
-Copiar `.env.example` a `.env`:
+La base debe existir antes de iniciar el backend.
+
+### 3. Configurar la conexión
+
+En la carpeta del backend, copiar el archivo de configuración de ejemplo:
 
 ```bash
 cp .env.example .env
 ```
 
-Completar `.env` con los datos reales de la instalación:
+Completar `.env` con los datos de la instalación local:
 
 ```dotenv
 DB_HOST=localhost
@@ -51,40 +61,59 @@ DB_USER=tu_usuario_mysql
 DB_PASSWORD=tu_contrasena_mysql
 ```
 
-`DB_USER` y `DB_PASSWORD` son valores a reemplazar, no credenciales incluidas en el proyecto. El archivo `.env` queda fuera de Git.
+Reemplazar `tu_usuario_mysql` y `tu_contrasena_mysql` por las credenciales correspondientes.
 
-Para crear un usuario dedicado o resolver problemas de conexión, consultar la [guía completa de instalación](docs/instalacion.md).
+El archivo `.env` está excluido del repositorio.
 
-## Ejecutar en desarrollo
+### 4. Iniciar el backend
 
 ```bash
 npm run start:dev
 ```
 
-El proceso compila TypeScript y arranca el servidor. Abrir:
+El proceso compila TypeScript e inicia el servidor en:
 
-- Comprobación básica: http://localhost:3000/
-- Usuarios: http://localhost:3000/api/usuarios
-- Espacios: http://localhost:3000/api/espacios
-- Estados de reserva: http://localhost:3000/api/estados
+[http://localhost:3000/](http://localhost:3000/)
 
-Al iniciar, la aplicación actualiza las tablas mediante MikroORM y carga los catálogos de roles y estados que falten. La base de datos debe existir previamente. Los catálogos se cargan automáticamente; no hay que ejecutar un comando separado de seed.
+Durante el inicio, MikroORM actualiza las tablas y se cargan los roles y estados iniciales que falten.
 
-## Scripts
+Para instrucciones adicionales y problemas frecuentes, consultar la [guía de instalación del sistema](docs/instalacion.md).
 
-| Comando | Función |
+## Scripts disponibles
+
+| Comando | Descripción |
 |---|---|
-| `npm run start:dev` | Compilar y ejecutar con seguimiento de cambios |
-| `npm run build` | Compilar el backend en `dist` |
+| `npm run start:dev` | Compila e inicia el servidor, siguiendo los cambios del código |
+| `npm run build` | Compila TypeScript y genera los archivos de la carpeta `dist` |
 
-El script `npm test` todavía es el marcador inicial del proyecto: no ejecuta una suite de tests. Las comprobaciones manuales se describen en la documentación.
+Todavía no hay tests automáticos implementados. El script `npm test` conserva el marcador inicial del proyecto.
 
-## Usar el sistema completo
+## Recursos de la API
 
-Con este servidor funcionando, iniciar el frontend en otra terminal siguiendo su README. El navegador se abre normalmente en http://localhost:5173/.
+- `/api/usuarios`
+- `/api/espacios`
+- `/api/disponibilidades`
+- `/api/reservas`
+- `/api/estados`
+
+La referencia de endpoints y ejemplos está en la [documentación de la API](docs/api.md).
+
+## Ejecutar el sistema completo
+
+Con MySQL y el backend funcionando, iniciar el [frontend](https://github.com/mateonunez1907/DSW-2026-Frontend) siguiendo las instrucciones de su README.
+
+La dirección habitual del frontend es:
+
+[http://localhost:5173/](http://localhost:5173/)
 
 ## Documentación
 
-La entrada es [docs/README.md](docs/README.md). Incluye reglas de negocio, modelos, API, seguimiento, avances y alcance de regularidad.
+Consultar el [índice de documentación](docs/README.md).
 
-La entrega actual es académica y se ejecuta en desarrollo. Los roles están modelados, pero el login y la autorización por roles corresponden a una etapa posterior.
+Incluye la propuesta, el modelo de dominio, las instrucciones de instalación, los pull requests, las minutas, el seguimiento, las reglas de negocio y la referencia de la API.
+
+## Estado de la entrega
+
+La entrega actual corresponde a regularidad y se ejecuta en un entorno de desarrollo.
+
+Los datos se almacenan en MySQL. Los roles están modelados y precargados, pero la autenticación y la autorización por roles todavía no están implementadas.
