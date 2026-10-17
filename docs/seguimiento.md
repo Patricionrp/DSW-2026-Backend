@@ -43,6 +43,15 @@ En las referencias, BE corresponde al backend y FE al frontend.
 | B03 | El filtro de disponibilidad devolvía todos los espacios | Se aplicaron las franjas semanales y las reservas que ocupan horario | [BE #11](https://github.com/Patricionrp/DSW-2026-Backend/pull/11) |
 | B04 | Se admitían fechas inexistentes y algunos errores exponían información interna | Se mejoró la validación de fechas y el manejo de errores | [BE #12](https://github.com/Patricionrp/DSW-2026-Backend/pull/12) |
 
+## Cierre de regularidad
+
+| ID | Trabajo | Estado | Evidencia |
+|---|---|---|---|
+| C01 | Detalle de espacios con consulta y horarios | Realizado | Integrado mediante FE #7 |
+| C02 | Documentación de regularidad | Publicada | Documentación disponible en ambos repositorios y propuesta externa actualizada |
+| C03 | Registro de coordinación del equipo | Publicado | Acuerdos y avances registrados en avances-y-minutas.md |
+| C04 | Visualización en distintos tamaños de pantalla | Verificada manualmente | Revisión de la interfaz en los tamaños requeridos |
+| C05 | Ejecución local del sistema | Comprobada durante el desarrollo | Backend, MySQL y frontend ejecutados; operaciones principales comprobadas manualmente |
 
 ## Trabajo previsto para aprobación
 
@@ -59,3 +68,7 @@ En las referencias, BE corresponde al backend y FE al frontend.
 - [Issues del backend](https://github.com/Patricionrp/DSW-2026-Backend/issues).
 - [Issues del frontend](https://github.com/mateonunez1907/DSW-2026-Frontend/issues).
 - [Registro de pull requests y contribuciones](pull-requests.md).
+
+Los identificadores F, B, C, P y A pertenecen a estas tablas. No son números de issues de GitHub.
+
+Al completar una tarea, se actualizará su estado y se agregará el enlace al issue, commit, pull request o registro correspondiente.
