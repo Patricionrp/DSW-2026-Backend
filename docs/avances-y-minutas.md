@@ -33,8 +33,7 @@ Los acuerdos funcionales siguientes fueron informados durante el seguimiento del
 
 ## Minuta retrospectiva — Inicio y reparto de trabajo
 
-
-**Período:** inicio del desarrollo. Los commits iniciales del backend son de septiembre de 2026; no se registró el día exacto de la coordinación.
+**Período:** inicio del desarrollo. A mediados de septiembre de 2026, Patricio ya había comenzado a preparar el boilerplate del backend, tomando como referencia los videos de la cátedra. A partir de esa base, coordinamos el reparto inicial de tareas: Patricio continuó con el CRUD de Espacio y Mateo comenzó el CRUD de Usuario.
 
 **Canales habituales:** Discord y WhatsApp. Las reuniones se realizaban generalmente de noche, por ser el horario cómodo para ambos.
 
@@ -57,8 +56,6 @@ Los acuerdos funcionales siguientes fueron informados durante el seguimiento del
 
 **Período:** durante el desarrollo inicial, con una corrección registrada en Git el 06/10/2026. No se conservó la fecha exacta del intercambio.
 
-**Participantes:** Mateo Nicolás Nuñez y Patricio Riquelme.
-
 **Situación:** aunque se había acordado npm, Mateo continuó utilizando pnpm durante parte del trabajo. Fue necesario unificar la gestión de dependencias con npm para integrar el proyecto.
 
 **Acuerdo aplicado:** utilizar npm como gestor común y mantener su lockfile.
@@ -72,6 +69,4 @@ El historial y el seguimiento del proyecto permiten reconstruir la continuidad:
 - Mateo desarrolló el CRUD inicial de Usuario y Reserva, el inicio del frontend y el flujo de usuarios y reservas, filtros y validaciones.
 - Patricio desarrolló el inicio de Espacio, la integración de persistencia, Disponibilidad, reglas iniciales de reservas y la reorganización visual y de servicios del frontend.
 - Ambos participaron de la integración mediante ramas, resolución de cambios y PR.
-
-Esta lista describe contribuciones comprobables; no se presenta como la transcripción de una única reunión posterior.
 
