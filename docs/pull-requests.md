@@ -34,17 +34,6 @@ El PR #4 se cerró sin fusionar y fue reemplazado por el #5. No se cuenta como f
 
 El ajuste del detalle está integrado en el PR #7. Los PR de documentación deben agregarse una vez publicados; no se asignan números a PR que todavía no existen.
 
-## Aportes iniciales anteriores a los PR recientes
-
-- [Backend: CRUD Usuario, commit 20e818d](https://github.com/Patricionrp/DSW-2026-Backend/commit/20e818d), autor Mateo.
-- [Backend: dependencias con npm, commit aac1acb](https://github.com/Patricionrp/DSW-2026-Backend/commit/aac1acb), autor Mateo.
-- [Frontend: inicialización, commit 0c78b61](https://github.com/mateonunez1907/DSW-2026-Frontend/commit/0c78b61), autor Mateo.
-- [Frontend: alta de usuario, commit 9bf9b62](https://github.com/mateonunez1907/DSW-2026-Frontend/commit/9bf9b62), autor Mateo.
-- [Frontend: edición, commit 115eead](https://github.com/mateonunez1907/DSW-2026-Frontend/commit/115eead), autor Mateo.
-- [Frontend: eliminación, commit 3b8d21a](https://github.com/mateonunez1907/DSW-2026-Frontend/commit/3b8d21a), autor Mateo.
-
-La autoría del PR y los commits permiten seguir aportes, pero no implican que todo el contenido de cada archivo pertenezca exclusivamente a una persona.
-
 ## Referencias al corte
 
 - Main remoto de backend: `504ef659ee90a717214a536812136857db704b76`.
